@@ -11,6 +11,8 @@ public class Client {
     private BufferedReader readerClient;
     private BufferedReader readerServer;
 
+
+    // Setup clientsocket and client read streams
     public void start(String address, int port) {
         try {
             clientSocket = new Socket(address, port);
@@ -18,38 +20,39 @@ public class Client {
             readerServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             writer = new PrintWriter(clientSocket.getOutputStream(), true);
             System.out.print("Connected With Server\n");
-            boolean connected = true;
             do {
                 String input;
-                connected = true;
                 try {
+                    // Read socket stream
                     if ((input = readerServer.readLine()) != null) {
                         System.out.println(input);
                     }
                     System.out.println("Finished Reading server");
+                    // Read client input
                     if ((input = readerClient.readLine()) != null) {
                         System.out.println(input);
                         writer.println(input);
                         if ("exit".equals(input)) {
-                            connected = false;
+                            break;
                         }
                     }
                 } catch (Exception E) {
-
+                    E.printStackTrace();
+                    break;
                 }
-            } while (connected);
+            } while (true);
             System.out.println("client closed");
             clientSocket.close();
             writer.close();
             readerClient.close();
             readerServer.close();
         } catch (Exception E) {
-
+            E.printStackTrace();
         }
     }
 
     public static void main(String args[]) {
         Client client = new Client();
-        client.start("127.0.0.1", 5555);
+        client.start("127.0.0.1", 6666);
     }
 }
